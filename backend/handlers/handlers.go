@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -114,18 +115,21 @@ func ToggleHabitEntry(c *gin.Context) {
 		return
 	}
 
-	// Parse habitID to uint
-	var habitIDUint uint
-	database.DB.Raw("SELECT ? + 0", habitID).Scan(&habitIDUint)
+	// Parse habitID to uint safely
+	habitIDUint, err := strconv.ParseUint(habitID, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid habit ID"})
+		return
+	}
 
 	// Check if entry exists for this date
 	var entry models.HabitEntry
-	result := database.DB.Where("habit_id = ? AND DATE(date) = DATE(?)", habitIDUint, date).First(&entry)
+	result := database.DB.Where("habit_id = ? AND DATE(date) = DATE(?)", uint(habitIDUint), date).First(&entry)
 
 	if result.Error != nil {
 		// Create new entry
 		entry = models.HabitEntry{
-			HabitID:   habitIDUint,
+			HabitID:   uint(habitIDUint),
 			Date:      date,
 			Completed: true,
 		}
@@ -167,18 +171,21 @@ func CreateHabitEntry(c *gin.Context) {
 		return
 	}
 
-	// Parse habitID to uint
-	var habitIDUint uint
-	database.DB.Raw("SELECT ? + 0", habitID).Scan(&habitIDUint)
+	// Parse habitID to uint safely
+	habitIDUint, err := strconv.ParseUint(habitID, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid habit ID"})
+		return
+	}
 
 	// Check if entry exists
 	var entry models.HabitEntry
-	result := database.DB.Where("habit_id = ? AND DATE(date) = DATE(?)", habitIDUint, date).First(&entry)
+	result := database.DB.Where("habit_id = ? AND DATE(date) = DATE(?)", uint(habitIDUint), date).First(&entry)
 
 	if result.Error != nil {
 		// Create new entry
 		entry = models.HabitEntry{
-			HabitID:   habitIDUint,
+			HabitID:   uint(habitIDUint),
 			Date:      date,
 			Completed: input.Completed,
 			Notes:     input.Notes,
