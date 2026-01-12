@@ -11,6 +11,25 @@ install:
     @echo "Installing frontend dependencies..."
     cd frontend && npm install
 
+# Build and run everything with docker-compose
+up:
+    @echo "Building and starting all services with docker-compose..."
+    docker-compose up --build -d
+    @echo ""
+    @echo "✅ Services started successfully!"
+    @echo ""
+    @echo "🌐 Access the application:"
+    @echo "   Frontend: http://localhost:5173"
+    @echo "   Backend API: http://localhost:8080/api"
+    @echo ""
+    @echo "📊 View logs: docker-compose logs -f"
+    @echo "🛑 Stop services: just down"
+
+# Stop docker-compose services
+down:
+    @echo "Stopping docker-compose services..."
+    docker-compose down
+
 # Run database migrations
 migrate:
     @echo "Running database migrations..."
@@ -35,17 +54,19 @@ build: build-frontend build-backend
 
 # Run the backend server (development)
 dev-backend:
-    @echo "Starting backend server..."
+    @echo "Starting backend server on http://localhost:8080..."
     go run .
 
 # Run the frontend dev server
 dev-frontend:
-    @echo "Starting frontend dev server..."
+    @echo "Starting frontend dev server on http://localhost:5173..."
     cd frontend && npm run dev
 
 # Run both backend and frontend in development mode
 dev:
     @echo "Starting development servers..."
+    @echo "Backend: http://localhost:8080"
+    @echo "Frontend: http://localhost:5173"
     @just dev-backend &
     @just dev-frontend
 
@@ -59,15 +80,11 @@ docker-run:
     @echo "Running Docker container..."
     docker run -p 8080:8080 -v $(pwd)/data:/data habit-tracker
 
-# Run with docker-compose
-compose-up:
-    @echo "Starting with docker-compose..."
-    docker-compose up -d
+# Run with docker-compose (alias for up)
+compose-up: up
 
-# Stop docker-compose
-compose-down:
-    @echo "Stopping docker-compose..."
-    docker-compose down
+# Stop docker-compose (alias for down)
+compose-down: down
 
 # Clean build artifacts
 clean:
@@ -95,3 +112,7 @@ lint:
     golangci-lint run || true
     @echo "Linting frontend code..."
     cd frontend && npm run lint || true
+
+# View logs from docker-compose
+logs:
+    docker-compose logs -f

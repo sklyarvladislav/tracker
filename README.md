@@ -28,16 +28,38 @@ A beautiful single-page web application for tracking daily habits with a GitHub-
 - **Docker** and **Docker Compose**
 - **Justfile** for task automation
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
+### Option 1: Using Docker Compose (Recommended)
+
+The easiest way to run the entire application:
+
+```bash
+# Build and start both frontend and backend
+just up
+
+# Or manually with docker-compose
+docker-compose up --build
+```
+
+**Access the application:**
+- 🌐 **Frontend**: [http://localhost:5173](http://localhost:5173)
+- 🔌 **Backend API**: [http://localhost:8080/api](http://localhost:8080/api)
+
+**Stop the services:**
+```bash
+just down
+```
+
+### Option 2: Local Development
+
+#### Prerequisites
 
 - Go 1.21 or higher
 - Node.js 20 or higher
-- Docker (optional)
 - Just command runner (optional, but recommended)
 
-### Installation
+#### Installation
 
 1. Clone the repository:
 ```bash
@@ -60,11 +82,16 @@ cd frontend && npm install
 #### Using Just (Recommended)
 
 ```bash
+# Run both backend and frontend
+just dev
+
 # Run backend only
 just dev-backend
+# Access at: http://localhost:8080
 
 # Run frontend only (in another terminal)
 just dev-frontend
+# Access at: http://localhost:5173
 
 # Build the application
 just build
@@ -79,6 +106,7 @@ just migrate
 ```bash
 # Run backend server
 go run .
+# Access at: http://localhost:8080
 
 # Build backend
 go build -o tracker-backend .
@@ -89,6 +117,7 @@ go build -o tracker-backend .
 # Run frontend dev server
 cd frontend
 npm run dev
+# Access at: http://localhost:5173
 
 # Build frontend
 npm run build
