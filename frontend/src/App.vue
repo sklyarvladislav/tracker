@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import HabitCard from './components/HabitCard.vue';
 import HabitForm from './components/HabitForm.vue';
 import { habitAPI } from './services/api.js';
@@ -59,8 +59,15 @@ async function handleFormSubmit(habitData) {
 
 async function handleToggleEntry(habitId, date) {
   try {
+    // Save scroll position before reloading
+    const scrollPosition = window.scrollY;
+    
     await habitAPI.toggleHabitEntry(habitId, date);
     await loadHabits();
+    
+    // Restore scroll position after DOM updates
+    await nextTick();
+    window.scrollTo(0, scrollPosition);
   } catch (err) {
     error.value = err.message;
     console.error('Failed to toggle entry:', err);
